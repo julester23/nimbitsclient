@@ -5,7 +5,7 @@ import datetime
 import logging
 from settings import EMAIL, URL, KEY
 
-ID = EMAIL + '/temp1'
+ID = EMAIL + '/temp3'
 
 def generate_some_data():
 	import math
@@ -35,14 +35,18 @@ def test():
 	
 	# get the latest value
 	#result = yield a.get_value(entity_id=ID)
+	#result = yield a.get_entity(entity_id=ID)
 
 	# upload a single-value current
-	#result = yield a.set_value(entity_id=ID, value=4)
-	#result = yield a.set_value(entity_id=ID, value=2.5, date=datetime.datetime.utcnow()-datetime.timedelta(hours=10))))
+	result = yield a.post_value(entity_id=ID, value=4)
+	#result = yield a.post_value(entity_id=ID, value=2.5, date=datetime.datetime.utcnow()-datetime.timedelta(hours=10))
 
 	# upload the batch of data
-	data = generate_some_data()
-	result = yield a.set_batch({ID:data})
+	#data = generate_some_data()
+	#result = yield a.set_batch({ID:data})
+
+	#result = yield a.createmissing_entity({"unit":"F","name":"temp4","key":"julien@rhotechsolar.com/temp4","entityType":1,"protectionLevel":2,"alertType":0,"parent":"3f0bb034-5b35-42c4-92f0-4006c6a8a5f3","owner":"julien@rhotechsolar.com","readOnly":False})
+	#result = yield a.get_entity(ID)
 
 	print result
 	reactor.stop()

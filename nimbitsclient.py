@@ -105,7 +105,8 @@ class NimbitsClient(object):
 			body_producer = StringProducer(values)
 		url = '%s/%s' % (self.url, 'service/v2/%s?%s' % (service, urllib.urlencode(param_dict),))
 		logging.debug('%s %s' % (method, url))
-		logging.debug('BODY:\n%s\n' % (body_producer.body,))
+		if body_producer:
+			logging.debug('BODY:\n%s\n' % (body_producer.body,))
 		request = self.agent.request(method=method,
 			uri = url,
 			bodyProducer = body_producer
@@ -132,11 +133,34 @@ class NimbitsClient(object):
 		request.addCallback(agent_printer)
 		return request
 
-	def set_value(self, entity_id, value, date=None):
+	def get_entity(self, entity_id):
+		request = self._request('entity', id=entity_id)
+		request.addCallback(agent_printer)
+		return request
+
+	def post_entity(self, values=None, params=None):
+		request = self._request('entity', method='POST', values=values, **params)
+		request.addCallback(agent_printer)
+		return request
+	
+	def create_entity(self, entity_json):
+		return self.post_entity(values=entity_json, params={'action': 'create'})
+
+	def createmissing_entity(self, entity_json):
+		return self.post_entity(values=entity_json, params={'action': 'createmissing'})
+
+	def update_entity(self, entity_json):
+		return self.post_entity(values=entity_json, params={'action': 'update'})
+
+	def delete_entity(self, entity_id, entity_type):
+		return self.post_entity(params={'action': 'delete', 'id': entity_id, 'type': entity_type})
+
+	def post_value(self, entity_id, value, date=None):
 		request = self._request('value', method='POST', id=entity_id, value=value, date=date)
 		request.addCallback(agent_printer)
 		return request
-	def set_batch(self, values):
+
+	def post_batch(self, values):
 		'''
 		values is a list of dicts with 't' and 'd' keys. 
 		Ex:
